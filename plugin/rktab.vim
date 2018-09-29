@@ -44,25 +44,22 @@ function! MyTabLabel(n)
   let prevwinnr = tabpagewinnr(a:n, '#')
   let prevwinbufnr = buflist[prevwinnr - 1]
 
-  " Set tab name to current buffer 
-  " When all below conditions fail, this will be used 
-  let bn = bufname(currwinbufnr)
-
   if buflisted(currwinbufnr)
     let bn = bufname(currwinbufnr)
 
   elseif buflisted(prevwinbufnr)
     let bn = bufname(prevwinbufnr)
 
-  else
-    for i in buflist
-      if buflisted(i)
-        let bn = bufname(i)
-        break
-      endif
-    endfor
-
   endif
+
+  let bn = bufname(currwinbufnr)
+
+  for i in buflist
+    if buflisted(i)
+      let bn = bufname(i)
+      break
+    endif
+  endfor
 
   return fnamemodify(empty(bn) ? "[New]" : bn, ':t')
   
