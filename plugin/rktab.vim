@@ -18,7 +18,7 @@ function! MyTabLine()
     let s .= '%' . (i + 1) . 'T'
 
     " the label is made by MyTabLabel()
-    let s .= '%{MyTabLabel2(' . (i + 1) . ')}%T'
+    let s .= '%{MyTabLabel(' . (i + 1) . ')}%T'
 
   endfor
 
@@ -33,7 +33,7 @@ function! MyTabLine()
   return s
 endfunction
 
-function! MyTabLabel2(n)
+function! MyTabLabel(n)
   let buflist = tabpagebuflist(a:n)
 
   " Current window of the tab
@@ -44,45 +44,28 @@ function! MyTabLabel2(n)
   let prevwinnr = tabpagewinnr(a:n, '#')
   let prevwinbufnr = buflist[prevwinnr - 1]
 
-  if !buflisted(currwinbufnr) && !buflisted(prevwinbufnr)
-  " If both curr and prev windows are unlisted, select listed.
+  " Set tab name to current buffer 
+  " When all below conditions fail, this will be used 
+  let bn = bufname(currwinbufnr)
+
+  if buflisted(currwinbufnr)
+    let bn = bufname(currwinbufnr)
+
+  elseif buflisted(prevwinbufnr)
+    let bn = bufname(prevwinbufnr)
+
+  else
     for i in buflist
       if buflisted(i)
-        return fnamemodify(bufname(i), ':t')
+        let bn = bufname(i)
+        break
       endif
     endfor
 
-    " When all the rest windows are unlisted use the current
-    return bufname(currwinbufnr)
-
-  elseif !buflisted(currwinbufnr)
-    " If previous buffer is listed use it
-    return fnamemodify(bufname(prevwinbufnr), ':t')
-
   endif
 
-  " If current window is list just use it
-  return fnamemodify(bufname(currwinbufnr), ':t')
-endfunction
-
-function! MyTabLabel(n)
-  let buflist = tabpagebuflist(a:n)
-  let winnr = tabpagewinnr(a:n)
-  let bufnr = buflist[winnr - 1]
-  let bn = bufname(bufnr)
-
-  if match(bn, "NERD_tree_[0-9][0-9]*$") == 0
-    let winnr = tabpagewinnr(a:n, '#')
-    let bn = bufname(buflist[winnr - 1])
-  endif
-
-  if empty(bn)
-    let bn = "[No Name]"
-  else
-    let bn = fnamemodify(bn, ":t")
-  endif
-
-  return bn
+  return fnamemodify(empty(bn) ? "[New]" : bn, ':t')
+  
 endfunction
 
 set tabline=%!MyTabLine()
