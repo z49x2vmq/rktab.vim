@@ -45,14 +45,14 @@ function! MyTabLabel(n)
   let prevwinbufnr = buflist[prevwinnr - 1]
 
   if buflisted(currwinbufnr) && !empty(bufname(currwinbufnr))
-    let bn = bufname(currwinbufnr)
+    let buf = currwinbufnr
   elseif buflisted(prevwinbufnr) && !empty(bufname(prevwinbufnr))
-    let bn = bufname(prevwinbufnr)
+    let buf = prevwinbufnr
   else
-    let bn = ''
+    let buf = currwinbufnr
     for i in buflist
       if !empty(bufname(i))
-        let bn = bufname(i)
+        let buf = i
         if buflisted(i)
           break
         endif
@@ -60,9 +60,16 @@ function! MyTabLabel(n)
     endfor
   endif
 
-  return fnamemodify(empty(bn) ? "[New]" : bn, ':t')
-  
+  let bn = bufname(buf)
+  let wins = tabpagewinnr(a:n, '$')
+
+  let winslabel = (wins > 1 ? wins . " " : "")
+  let bufnamelabel = fnamemodify(empty(bn) ? "[No Name]" : bn, ':t')
+
+  return winslabel . bufnamelabel
+
 endfunction
+
 
 hi TabLine gui=NONE cterm=NONE
 set tabline=%!MyTabLine()
