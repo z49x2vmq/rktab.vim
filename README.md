@@ -7,4 +7,6 @@ This plugin skips unlisted buffers' name as much as possible.
 1. Current Window's buffer(if it is listed and has a name)
 1. Previous Window's buffer(if it is listed and has a name)
 1. A buffer that is listed and has a name
+1. Current Window's buffer(if it has a name)
+1. Previous Window's buffer(if it has a name)
 1. A buffer that has a name

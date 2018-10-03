@@ -58,6 +58,8 @@ function! MyTabLabel(n)
       endif
     endfor
 
+    " If buf is not set or buf is not listed,
+    " we need to fallback to currwin and prevwin
     if !exists("buf") || !buflisted(buf)
       if !empty(bufname(currwinbufnr))
         let buf = currwinbufnr
