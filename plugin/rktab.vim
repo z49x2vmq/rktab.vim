@@ -49,8 +49,7 @@ function! MyTabLabel(n)
   elseif buflisted(prevwinbufnr) && !empty(bufname(prevwinbufnr))
     let buf = prevwinbufnr
   else
-    let buf = currwinbufnr
-    for i in buflist
+    for i in reverse(buflist)
       if !empty(bufname(i))
         let buf = i
         if buflisted(i)
@@ -58,9 +57,17 @@ function! MyTabLabel(n)
         endif
       endif
     endfor
+
+    if !exists("buf") || !buflisted(buf)
+      if !empty(bufname(currwinbufnr))
+        let buf = currwinbufnr
+      elseif !empty(bufname(prevwinbufnr))
+        let buf = prevwinbufnr
+      endif
+    endif
   endif
 
-  let bn = bufname(buf)
+  let bn = (exists("buf")) ? bufname(buf) : ""
   let wins = tabpagewinnr(a:n, '$')
 
   let winslabel = (wins > 1 ? wins . " " : "")
